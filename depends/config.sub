@@ -1508,7 +1508,7 @@ case $os in
 	-tpf*)
 		os=-tpf
 		;;
-	-tnaldn*)
+	-triton*)
 		os=-sysv3
 		;;
 	-oss*)
