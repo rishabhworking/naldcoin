@@ -1,0 +1,81 @@
+policy_module(nald, 1.100.1)
+
+########################################
+#
+# Declarations
+#
+
+type nald_t;
+type nald_exec_t;
+init_daemon_domain(nald_t, nald_exec_t)
+
+permissive nald_t;
+
+type nald_initrc_exec_t;
+init_script_file(nald_initrc_exec_t)
+
+type nald_conf_t;
+files_type(nald_conf_t)
+
+type nald_var_lib_t;
+files_type(nald_var_lib_t)
+
+type nald_var_run_t;
+files_type(nald_var_run_t)
+
+type nald_port_t;
+corenet_port(nald_port_t)
+
+########################################
+#
+# nald local policy
+#
+allow nald_t self:process { fork };
+
+allow nald_t self:fifo_file rw_fifo_file_perms;
+allow nald_t self:unix_stream_socket create_stream_socket_perms;
+
+manage_dirs_pattern(nald_t, nald_conf_t, nald_conf_t)
+manage_files_pattern(nald_t, nald_conf_t, nald_conf_t)
+
+manage_dirs_pattern(nald_t, nald_var_lib_t, nald_var_lib_t)
+manage_files_pattern(nald_t, nald_var_lib_t, nald_var_lib_t)
+files_var_lib_filetrans(nald_t, nald_var_lib_t, { dir file })
+
+manage_dirs_pattern(nald_t, nald_var_run_t, nald_var_run_t)
+manage_files_pattern(nald_t, nald_var_run_t, nald_var_run_t)
+
+sysnet_dns_name_resolve(nald_t)
+corenet_all_recvfrom_unlabeled(nald_t)
+
+allow nald_t self:tcp_socket create_stream_socket_perms;
+corenet_tcp_sendrecv_generic_if(nald_t)
+corenet_tcp_sendrecv_generic_node(nald_t)
+corenet_tcp_sendrecv_all_ports(nald_t)
+corenet_tcp_bind_generic_node(nald_t)
+
+gen_require(`
+    type nald_port_t;
+')
+allow nald_t nald_port_t:tcp_socket name_bind;
+
+gen_require(`
+    type nald_port_t;
+')
+allow nald_t nald_port_t:tcp_socket name_connect;
+
+domain_use_interactive_fds(nald_t)
+
+files_read_etc_files(nald_t)
+
+miscfiles_read_localization(nald_t)
+
+sysnet_dns_name_resolve(nald_t)
+
+allow nald_t nald_exec_t:file execute_no_trans;
+allow nald_t self:process setsched;
+corecmd_exec_ls(nald_t)
+corenet_tcp_connect_http_port(nald_t)
+dev_read_urand(nald_t)
+fs_getattr_xattr_fs(nald_t)
+kernel_read_system_state(nald_t)

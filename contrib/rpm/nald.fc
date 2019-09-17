@@ -1,0 +1,8 @@
+/usr/bin/nald-cli		--	gen_context(system_u:object_r:nald_exec_t,s0)
+/usr/sbin/naldd		--	gen_context(system_u:object_r:nald_exec_t,s0)
+/usr/lib(64)?/nald/naldd		--	gen_context(system_u:object_r:nald_exec_t,s0)
+
+/etc/nald(/.*)?		gen_context(system_u:object_r:nald_conf_t,s0)
+/var/lib/nald(/.*)?		gen_context(system_u:object_r:nald_var_lib_t,s0)
+
+(/var)?/run/naldd(/.*)?   gen_context(system_u:object_r:nald_var_run_t,s0)

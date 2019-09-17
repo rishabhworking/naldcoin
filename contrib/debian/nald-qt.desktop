@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Naldcoin Core
+Comment=Connect to the Naldcoin P2P Network
+Comment[de]=Verbinde mit dem Naldcoin peer-to-peer Netzwerk
+Comment[fr]=Naldcoin, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=Naldcoin, eşten eşe kriptografik sanal para birimi
+Exec=nald-qt %u
+Terminal=false
+Type=Application
+Icon=nald128
+MimeType=x-scheme-handler/nald;
+Categories=Office;Finance;

@@ -1,0 +1,33 @@
+# /etc/conf.d/naldd: config file for /etc/init.d/naldd
+
+# Config file location
+#NALDD_CONFIGFILE="/etc/nald/nald.conf"
+
+# What directory to write pidfile to?  (created and owned by $NALDD_USER)
+#NALDD_PIDDIR="/var/run/naldd"
+
+# What filename to give the pidfile
+#NALDD_PIDFILE="${NALDD_PIDDIR}/naldd.pid"
+
+# Where to write naldd data (be mindful that the blockchain is large)
+#NALDD_DATADIR="/var/lib/naldd"
+
+# User and group to own naldd process
+#NALDD_USER="nald"
+#NALDD_GROUP="nald"
+
+# Path to naldd executable
+#NALDD_BIN="/usr/bin/naldd"
+
+# Nice value to run naldd under
+#NALDD_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+#NALDD_OPTS=""
+
+# The timeout in seconds OpenRC will wait for naldd to terminate
+# after a SIGTERM has been raised.
+# Note that this will be mapped as argument to start-stop-daemon's
+# '--retry' option, which means you can specify a retry schedule
+# here. For more information see man 8 start-stop-daemon.
+NALDD_SIGTERM_TIMEOUT=60

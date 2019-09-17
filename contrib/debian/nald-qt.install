@@ -1,0 +1,6 @@
+usr/local/bin/nald-qt usr/bin
+share/pixmaps/nald32.xpm usr/share/pixmaps
+share/pixmaps/nald16.xpm usr/share/pixmaps
+share/pixmaps/nald128.png usr/share/pixmaps
+debian/nald-qt.desktop usr/share/applications
+debian/nald-qt.protocol usr/share/kde4/services/

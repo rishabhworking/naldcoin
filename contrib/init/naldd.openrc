@@ -1,0 +1,92 @@
+#!/sbin/runscript
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/nald/.nald" ]; then
+	NALDD_DEFAULT_DATADIR="/var/lib/nald/.nald"
+else
+	NALDD_DEFAULT_DATADIR="/var/lib/naldd"
+fi
+
+NALDD_CONFIGFILE=${NALDD_CONFIGFILE:-/etc/nald/nald.conf}
+NALDD_PIDDIR=${NALDD_PIDDIR:-/var/run/naldd}
+NALDD_PIDFILE=${NALDD_PIDFILE:-${NALDD_PIDDIR}/naldd.pid}
+NALDD_DATADIR=${NALDD_DATADIR:-${NALDD_DEFAULT_DATADIR}}
+NALDD_USER=${NALDD_USER:-${NALD_USER:-nald}}
+NALDD_GROUP=${NALDD_GROUP:-nald}
+NALDD_BIN=${NALDD_BIN:-/usr/bin/naldd}
+NALDD_NICE=${NALDD_NICE:-${NICELEVEL:-0}}
+NALDD_OPTS="${NALDD_OPTS:-${NALD_OPTS}}"
+
+name="Naldcoin Core Daemon"
+description="Naldcoin cryptocurrency P2P network daemon"
+
+command="/usr/bin/naldd"
+command_args="-pid=\"${NALDD_PIDFILE}\" \
+		-conf=\"${NALDD_CONFIGFILE}\" \
+		-datadir=\"${NALDD_DATADIR}\" \
+		-daemon \
+		${NALDD_OPTS}"
+
+required_files="${NALDD_CONFIGFILE}"
+start_stop_daemon_args="-u ${NALDD_USER} \
+			-N ${NALDD_NICE} -w 2000"
+pidfile="${NALDD_PIDFILE}"
+
+# The retry schedule to use when stopping the daemon. Could be either
+# a timeout in seconds or multiple signal/timeout pairs (like
+# "SIGKILL/180 SIGTERM/300")
+retry="${NALDD_SIGTERM_TIMEOUT}"
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${NALDD_USER}:${NALDD_GROUP}" \
+	"${NALDD_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${NALDD_USER}:${NALDD_GROUP}" \
+	"${NALDD_PIDDIR}"
+
+	checkpath -f \
+	-o ${NALDD_USER}:${NALDD_GROUP} \
+	-m 0660 \
+	${NALDD_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${NALDD_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run naldd."
+		eerror "The setting must appear in ${NALDD_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following "
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"Naldcoin Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}

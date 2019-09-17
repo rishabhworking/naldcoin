@@ -1,0 +1,7 @@
+[main]
+host = https://www.transifex.com
+
+[nald.qt-translation-014x]
+file_filter = src/qt/locale/nald_<lang>.ts
+source_file = src/qt/locale/nald_en.ts
+source_lang = en
